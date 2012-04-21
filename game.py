@@ -151,7 +151,7 @@ def main():
     entity3.p = 100,200
 	
     allsprites = pygame.sprite.RenderPlain((fist,chimp))
-    
+    i = 0
 #Main Loop
     going = True
     while going:
@@ -187,9 +187,16 @@ def main():
         screen.blit(background, (0, 0))
         #allsprites.draw(screen)
 		
+        
         entity1.p = pygame.mouse.get_pos()
         entity2.p = chimp.rect[0],chimp.rect[1]
-		
+        
+		#testing animation, in a very cheap way >_>
+        entity1.setImage(i)
+        i+=1
+        if i>2:
+            i=0
+
         entity1.draw(screen)
         entity2.draw(screen)
         entity3.draw(screen)
