@@ -144,21 +144,11 @@ def main():
     entity2.set_image('entity.jpg')
     entity2.p = 300, 200
 
-<<<<<<< HEAD
-    entity1 = Entity()
-    entity1.setImage(1)
-    entity1.p = 100,100
-	
-    entity2 = Entity()
-    entity2.setImage(0)
-    entity2.p = 300,200
-=======
     entity3 = asset.Entity()
     entity3.set_image('entity.jpg')
     entity3.p = 100, 200
 
     allsprites = pygame.sprite.RenderPlain((fist, chimp))
->>>>>>> 2ac98e87b7c50e08af9d404d1bb9b1c7555a7fc6
 
 #Main Loop
     going = True
@@ -196,17 +186,7 @@ def main():
         #allsprites.draw(screen)
 
         entity1.p = pygame.mouse.get_pos()
-<<<<<<< HEAD
-        entity2.p = chimp.rect[0],chimp.rect[1]
-        
-		#testing animation, in a very cheap way >_>
-        #entity1.setImage(i)
-        i+=1
-        if i>2:
-            i=0
-=======
         entity2.p = chimp.rect[0], chimp.rect[1]
->>>>>>> 2ac98e87b7c50e08af9d404d1bb9b1c7555a7fc6
 
         entity2.draw(screen)
         entity3.draw(screen)
