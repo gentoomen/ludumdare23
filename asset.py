@@ -123,28 +123,35 @@ class Entity(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = [0, 0]
 
-    def set_anim(self, name, frames=1, num=0, colorkey=0):
+    def set_anim(self, name, frametime=1, num=0, colorkey=0):
         '''Use an animation (see get_anim) as the sprite.
 
         Gets an animation named `anim' (num and colorkey used if it's not already loaded).
-        Changes to the next frame every `frames' frames.'''
+        Changes to the next frame every `frametime' milliseconds.'''
         self.anim = get_anim(name, num, colorkey)
-        self.anim_counter = 0
+        self.anim_counter = 0.0
+        self.anim_frame = 0
         self.image = self.anim[0]
         self.rect = self.anim[0].get_rect()
         self.rect.topleft = [0, 0]
-        self.frames = int(frames)
+        self.frame_time = frametime
 
-    def update(self):
+    def update(self, dt):
         self.rect[0] = self.p[0]
         self.rect[1] = self.p[1]
         if self.anim:
-            self.anim_counter += 1
-            if not (self.anim_counter % self.frames):
-                self.image = self.anim[(self.anim_counter/self.frames) % len(self.anim)]
+            self.anim_counter += dt
+            if self.anim_counter > self.frame_time:
+                self.anim_counter = 0.0
+                self.anim_frame += 1
+                #print self.anim_frame
+                if self.anim_frame > len(self.anim)-1:
+                    self.anim_frame = 0
+                self.image = self.anim[self.anim_frame]
+               
 
-    def draw(self, target):
-        self.update()
+    def draw(self, target,dt):
+        self.update(dt)
         g = pygame.sprite.RenderPlain(self)
         g.draw(target)
         g.empty()

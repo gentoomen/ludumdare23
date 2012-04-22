@@ -137,16 +137,23 @@ def main():
 
     entity1 = asset.Entity()
     #entity1.set_image('entity.jpg')
-    entity1.set_anim('animation.png', num=20, frames=FPS/20, colorkey=pygame.Color(255, 255, 255))
+    entity1.set_anim('ant.png', num=3, frametime=100.0, colorkey=pygame.Color(255, 255, 255))
     entity1.p = 100, 100
 
     entity2 = asset.Entity()
-    entity2.set_image('entity.jpg')
+    #entity2.set_image('entity.jpg')
+    entity2.set_anim('ant.png', num=3, frametime=100.0, colorkey=pygame.Color(255, 255, 255))
     entity2.p = 300, 200
 
     entity3 = asset.Entity()
-    entity3.set_image('entity.jpg')
+    #entity3.set_image('entity.jpg')
+    entity3.set_anim('ant.png', num=3, frametime=100.0, colorkey=pygame.Color(255, 255, 255))
     entity3.p = 100, 200
+
+    entity4 = asset.Entity()
+    #entity3.set_image('entity.jpg')
+    entity4.set_anim('ant.png', num=3, frametime=100.0, colorkey=pygame.Color(255, 255, 255))
+    entity4.p = 400, 150
 
     allsprites = pygame.sprite.RenderPlain((fist, chimp))
 
@@ -160,7 +167,7 @@ def main():
 
     going = True
     while going:
-        #clock.tick(FPS)
+        clock.tick(1/100)
         #Handle Input Events
         newTime = pygame.time.get_ticks()
         frameTime = newTime - currentTime
@@ -205,9 +212,10 @@ def main():
         entity1.p = pygame.mouse.get_pos()
         entity2.p = chimp.rect[0], chimp.rect[1]
 
-        entity2.draw(screen)
-        entity3.draw(screen)
-        entity1.draw(screen)
+        entity2.draw(screen,dtTime)
+        entity3.draw(screen,dtTime)
+        entity1.draw(screen,dtTime)
+        entity4.draw(screen,dtTime)
 
         pygame.display.flip()
 
