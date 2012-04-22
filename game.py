@@ -136,26 +136,6 @@ def main():
     chimp = Chimp()
     fist = Fist()
 
-    entity1 = asset.Entity()
-    #entity1.set_image('entity.jpg')
-    entity1.set_anim('ant.png', num=3, frametime=100.0, colorkey=pygame.Color(255, 255, 255))
-    entity1.p = 100, 100
-
-    entity2 = asset.Entity()
-    #entity2.set_image('entity.jpg')
-    entity2.set_anim('ant.png', num=3, frametime=100.0, colorkey=pygame.Color(255, 255, 255))
-    entity2.p = 300, 200
-
-    entity3 = asset.Entity()
-    #entity3.set_image('entity.jpg')
-    entity3.set_anim('ant.png', num=3, frametime=100.0, colorkey=pygame.Color(255, 255, 255))
-    entity3.p = 100, 200
-
-    entity4 = asset.Entity()
-    #entity3.set_image('entity.jpg')
-    entity4.set_anim('ant.png', num=3, frametime=100.0, colorkey=pygame.Color(255, 255, 255))
-    entity4.p = 400, 150
-
     allsprites = pygame.sprite.RenderPlain((fist, chimp))
     
     ants = []
@@ -216,9 +196,6 @@ def main():
         screen.blit(background, (0, 0))
         #allsprites.draw(screen)
 
-        entity1.p = pygame.mouse.get_pos()
-        entity2.p = chimp.rect[0], chimp.rect[1]
-
         for i in xrange(100):
             
             ax = ants[i].p[0]
@@ -234,11 +211,6 @@ def main():
             ants[i].p = ax, ay
             ants[i].draw(screen,dtTime)
 			
-        #entity2.draw(screen,dtTime)
-        #entity3.draw(screen,dtTime)
-        #entity1.draw(screen,dtTime)
-        #entity4.draw(screen,dtTime)
-
         pygame.display.flip()
 
     pygame.quit()
