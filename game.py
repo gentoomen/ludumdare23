@@ -20,6 +20,7 @@ from pygame.compat import geterror
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 data_dir = os.path.join(main_dir, 'data')
 
+FPS = 60
 
 #import objects
 #from objects import *
@@ -31,7 +32,8 @@ class Fist(pygame.sprite.Sprite):
     """moves a clenched fist on the screen, following the mouse"""
     def __init__(self):
         pygame.sprite.Sprite.__init__(self) #call Sprite initializer
-        self.image, self.rect = asset.get_image('fist.bmp', -1)
+        self.image = asset.get_image('fist.bmp', -1)
+        self.rect = self.image.get_rect()
         self.punching = 0
 
     def update(self):
@@ -58,7 +60,8 @@ class Chimp(pygame.sprite.Sprite):
        monkey when it is punched."""
     def __init__(self):
         pygame.sprite.Sprite.__init__(self) #call Sprite intializer
-        self.image, self.rect = asset.get_image('coolface.png', -1)
+        self.image = asset.get_image('coolface.png', -1)
+        self.rect = self.image.get_rect()
         screen = pygame.display.get_surface()
         self.area = screen.get_rect()
         self.rect.topleft = 10, 10
@@ -133,7 +136,8 @@ def main():
     fist = Fist()
 
     entity1 = asset.Entity()
-    entity1.set_image('entity.jpg')
+    #entity1.set_image('entity.jpg')
+    entity1.set_anim('animation.png', num=20, frames=FPS/20)
     entity1.p = 100, 100
 
     entity2 = asset.Entity()
@@ -149,7 +153,7 @@ def main():
 #Main Loop
     going = True
     while going:
-        clock.tick(60)
+        clock.tick(FPS)
         #Handle Input Events
         for event in pygame.event.get():
             if event.type == QUIT:
