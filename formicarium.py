@@ -5,7 +5,7 @@ DIRT = pygame.Color(150, 50, 0) # dirt color
 AIR = pygame.Color(250, 150, 100) # tunnel color
 SIZE = 8 # tunnel size
 TUNNELS = 10 # increase for more tunnels
-DISTANCE = 128 # increase for longer tunnels, 0 to disable
+DISTANCE = 0 # increase for longer tunnels, 0 to disable
 MOVE = 8 # how much tunnel to generate at once in one direction
 
 class Formicarium(object):
@@ -34,7 +34,7 @@ class Formicarium(object):
                     pos = None
                     while not pos:
                         pos = self.tunnels[random.randrange(len(self.tunnels))]
-                        distance = random.randrange(DISTANCE)
+                        distance = random.randrange(DISTANCE) if DISTANCE else 0
                 else:
                     pos = random.randrange(0, self.dim[0]/SIZE), 0 #random.randrange(0, self.dim[1]/SIZE)
                 d = random.randrange(6)
@@ -45,7 +45,7 @@ class Formicarium(object):
                 self.tunnels.append(pos)
             oldpos = pos
             pos = self.topos(pos, direct)
-            if pos[0] >= 0 and pos[0] < self.dim[0]/SIZE and pos[1] >= 0 and pos[1] < self.dim[1]/SIZE and not self.dirt[pos[0]][pos[1]] and (random.randrange(distance) < DISTANCE or not DISTANCE):
+            if pos[0] >= 0 and pos[0] < self.dim[0]/SIZE and pos[1] >= 0 and pos[1] < self.dim[1]/SIZE and not self.dirt[pos[0]][pos[1]] and (not DISTANCE or random.randrange(distance) < DISTANCE):
                 self.tunnels.append(pos)
                 directs = set()
                 direct = self.new_direct(direct)
