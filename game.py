@@ -151,33 +151,50 @@ def main():
     allsprites = pygame.sprite.RenderPlain((fist, chimp))
 
 #Main Loop
+    currentTime = pygame.time.get_ticks()
+    newTime = 0.0
+    frameTime = 0.0
+    accumulator = 0.0
+    dt = 1000.0/60.0 #60 fps
+    dtTime = 0.0 #total time for this frame, for animations
+
     going = True
     while going:
-        clock.tick(FPS)
+        #clock.tick(FPS)
         #Handle Input Events
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                going = False
-            elif event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    going = False
-                if event.key == K_LEFT:
-                    chimp.rect[0] -= 10
-                if event.key == K_RIGHT:
-                    chimp.rect[0] += 10
-                if event.key == K_UP:
-                    chimp.rect[1] -= 10
-                if event.key == K_DOWN:
-                    chimp.rect[1] += 10
+        newTime = pygame.time.get_ticks()
+        frameTime = newTime - currentTime
+        currentTime = newTime
+        accumulator += frameTime
+        dtTime = 0.0
+        #loop for smooth delta input, use dtTime for animations after the while loop
+        while accumulator > dt:
+            accumulator -= dt
+            dtTime += dt
 
-            elif event.type == MOUSEBUTTONDOWN:
-                if fist.punch(chimp):
-                    asset.get_sound('punch.wav').play() #punch
-                    chimp.punched()
-                else:
-                    asset.get_sound('whiff.wav').play() #miss
-            elif event.type == MOUSEBUTTONUP:
-                fist.unpunch()
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    going = False
+                elif event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        going = False
+                    if event.key == K_LEFT:
+                        chimp.rect[0] -= 0.5 * dt
+                    if event.key == K_RIGHT:
+                        chimp.rect[0] += 0.5 * dt
+                    if event.key == K_UP:
+                        chimp.rect[1] -= 0.5 * dt
+                    if event.key == K_DOWN:
+                        chimp.rect[1] += 0.5 * dt
+
+                elif event.type == MOUSEBUTTONDOWN:
+                    if fist.punch(chimp):
+                        asset.get_sound('punch.wav').play() #punch
+                        chimp.punched()
+                    else:
+                        asset.get_sound('whiff.wav').play() #miss
+                elif event.type == MOUSEBUTTONUP:
+                    fist.unpunch()
 
         allsprites.update()
 
