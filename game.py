@@ -13,7 +13,7 @@ import os
 import pygame
 from pygame.locals import *
 from pygame.compat import geterror
-
+import random
 #if not pygame.font: print ('Warning, fonts disabled')
 #if not pygame.mixer: print ('Warning, sound disabled')
 
@@ -110,7 +110,7 @@ def main():
        a loop until the function returns."""
 #Initialize Everything
     pygame.init()
-    screen = pygame.display.set_mode((640, 400))
+    screen = pygame.display.set_mode((640, 480))
     pygame.display.set_caption('LD23 a tiny world')
     pygame.mouse.set_visible(0)
     pygame.key.set_repeat(1, 10)
@@ -124,6 +124,7 @@ def main():
         font = pygame.font.Font(None, 36)
         text = font.render("SWAGGIN THE SWAG!", 1, (10, 10, 10))
         textpos = text.get_rect(centerx=background.get_width()/2)
+        background.blit(asset.get_image('f4.png', 0), (0,0))
         background.blit(text, textpos)
 
 #Display The Background
@@ -156,7 +157,13 @@ def main():
     entity4.p = 400, 150
 
     allsprites = pygame.sprite.RenderPlain((fist, chimp))
-
+    
+    ants = []
+    for i in xrange(100):
+        ants.append(asset.Entity())
+        ants[i].set_anim('ant.png', num=3, frametime=100.0, colorkey=pygame.Color(255, 255, 255))
+        ants[i].p = random.randrange(640), random.randrange(480)
+	
 #Main Loop
     currentTime = pygame.time.get_ticks()
     newTime = 0.0
@@ -167,7 +174,7 @@ def main():
 
     going = True
     while going:
-        clock.tick(1/100)
+        #clock.tick(1.0/100.0)
         #Handle Input Events
         newTime = pygame.time.get_ticks()
         frameTime = newTime - currentTime
@@ -186,13 +193,13 @@ def main():
                     if event.key == K_ESCAPE:
                         going = False
                     if event.key == K_LEFT:
-                        chimp.rect[0] -= 0.5 * dt
+                        chimp.rect[0] -= 0.1 * dt
                     if event.key == K_RIGHT:
-                        chimp.rect[0] += 0.5 * dt
+                        chimp.rect[0] += 0.1 * dt
                     if event.key == K_UP:
-                        chimp.rect[1] -= 0.5 * dt
+                        chimp.rect[1] -= 0.1 * dt
                     if event.key == K_DOWN:
-                        chimp.rect[1] += 0.5 * dt
+                        chimp.rect[1] += 0.1 * dt
 
                 elif event.type == MOUSEBUTTONDOWN:
                     if fist.punch(chimp):
@@ -212,10 +219,25 @@ def main():
         entity1.p = pygame.mouse.get_pos()
         entity2.p = chimp.rect[0], chimp.rect[1]
 
-        entity2.draw(screen,dtTime)
-        entity3.draw(screen,dtTime)
-        entity1.draw(screen,dtTime)
-        entity4.draw(screen,dtTime)
+        for i in xrange(100):
+            
+            ax = ants[i].p[0]
+            ay = ants[i].p[1]
+            if random.randrange(0,100) > 80:
+                ax+= 0.1 * dtTime
+            if random.randrange(0,100) > 80:
+                ax-= 0.1 * dtTime
+            if random.randrange(0,100) > 80:
+                ay+= 0.1 * dtTime
+            if random.randrange(0,100) > 80:
+                ay-= 0.1 * dtTime
+            ants[i].p = ax, ay
+            ants[i].draw(screen,dtTime)
+			
+        #entity2.draw(screen,dtTime)
+        #entity3.draw(screen,dtTime)
+        #entity1.draw(screen,dtTime)
+        #entity4.draw(screen,dtTime)
 
         pygame.display.flip()
 
