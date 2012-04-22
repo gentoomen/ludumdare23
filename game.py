@@ -139,11 +139,11 @@ def main():
     asset.load_image("entity.jpg",0)
 
     entity1 = Entity()
-    entity1.setImage(2)
+    entity1.setImage(1)
     entity1.p = 100,100
 	
     entity2 = Entity()
-    entity2.setImage(2)
+    entity2.setImage(0)
     entity2.p = 300,200
 
     entity3 = Entity()
@@ -192,7 +192,7 @@ def main():
         entity2.p = chimp.rect[0],chimp.rect[1]
         
 		#testing animation, in a very cheap way >_>
-        entity1.setImage(i)
+        #entity1.setImage(i)
         i+=1
         if i>2:
             i=0
