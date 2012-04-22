@@ -115,7 +115,7 @@ class Formicarium(object):
                     pygame.draw.circle(self.surf, AIR, (rect[0]+SIZE/2+SIZE/4, rect[1]+SIZE/2), SIZE/2 + SIZE/4)
                     pygame.draw.circle(self.surf, AIR, (rect[0]+SIZE/2+SIZE/4, rect[1]+SIZE/2+SIZE/4), SIZE/2 + SIZE/4)
 
-    def draw_lines(self):
+    def draw_lines(self, width=SIZE*2):
         self.surf.fill(DIRT)
         lines = []
         for t in self.tunnels:
@@ -123,7 +123,7 @@ class Formicarium(object):
                 lines.append((t[0] * SIZE, t[1] * SIZE))
             else:
                 if len(lines) > 1:
-                    pygame.draw.lines(self.surf, AIR, False, lines, SIZE*2)
+                    pygame.draw.lines(self.surf, AIR, False, lines, width)
                 lines = []
 
 if __name__ == '__main__': #test
@@ -131,19 +131,24 @@ if __name__ == '__main__': #test
         pygame.init()
         screen = pygame.display.set_mode((640, 480))
         f = Formicarium(screen)
-        f.draw_lines()
+        f.draw_lines(1)
         pygame.display.flip()
-        ok = False
+        ok = 0
         c = pygame.time.Clock()
         while True:
             c.tick(30)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or event.type == pygame.KEYUP:
                     if ok:
-                       #pygame.image.save(screen, 'f1.png')
-                        return
-                    #pygame.image.save(screen, 'f3.png')
-                    f.draw()
-                    pygame.display.flip()
-                    ok = True
+                        if ok == 2:
+                            #pygame.image.save(screen, 'f4.png')
+                            return
+                        f.draw()
+                        pygame.display.flip()
+                        ok = True
+                        ok += 1
+                    else:
+                        f.draw_lines()
+                        pygame.display.flip()
+                        ok += 1
     main()
