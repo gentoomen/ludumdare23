@@ -122,7 +122,7 @@ def main():
 #Put Text On The Background, Centered
     if pygame.font:
         font = pygame.font.Font(None, 36)
-        text = font.render("SWAGGIN THE SWAG!", 1, (10, 10, 10))
+        text = font.render("SURE IS ANTS IN HERE!", 1, (10, 10, 10))
         textpos = text.get_rect(centerx=background.get_width()/2)
         background.blit(asset.get_image('f4.png', 0), (0,0))
         background.blit(text, textpos)
@@ -143,7 +143,13 @@ def main():
         ants.append(asset.Entity())
         ants[i].set_anim('ant.png', num=3, frametime=100.0, colorkey=pygame.Color(255, 255, 255))
         ants[i].p = random.randrange(640), random.randrange(480)
-	
+		
+        asset.get_image('apple.png', -1)
+        food = asset.Entity()
+        food.set_image('apple.png')
+        food.p = 320, 240
+
+		
 #Main Loop
     currentTime = pygame.time.get_ticks()
     newTime = 0.0
@@ -195,20 +201,30 @@ def main():
         #Draw Everything
         screen.blit(background, (0, 0))
         #allsprites.draw(screen)
-
+        food.p = pygame.mouse.get_pos()
+        food.draw(screen,dtTime)
+		#swarm test
         for i in xrange(100):
-            
             ax = ants[i].p[0]
             ay = ants[i].p[1]
-            if random.randrange(0,100) > 80:
+            if random.randrange(0,100) > 50:
                 ax+= 0.1 * dtTime
-            if random.randrange(0,100) > 80:
+            if random.randrange(0,100) > 50:
                 ax-= 0.1 * dtTime
-            if random.randrange(0,100) > 80:
+            if random.randrange(0,100) > 50:
                 ay+= 0.1 * dtTime
-            if random.randrange(0,100) > 80:
+            if random.randrange(0,100) > 50:
                 ay-= 0.1 * dtTime
-            ants[i].p = ax, ay
+            if ax < food.p[0] and random.randrange(0,100) > 80:
+                ax += 0.1 * dtTime
+            if ax > food.p[0] and random.randrange(0,100) > 80:
+                ax -= 0.1 * dtTime
+            if ay < food.p[1] and random.randrange(0,100) > 80:
+                ay += 0.1 * dtTime
+            if ay > food.p[1] and random.randrange(0,100) > 80:
+                ay -= 0.1 * dtTime
+            
+            ants[i].p = [ax, ay]
             ants[i].draw(screen,dtTime)
 			
         pygame.display.flip()

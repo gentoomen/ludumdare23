@@ -150,7 +150,7 @@ class Entity(pygame.sprite.Sprite):
                 self.image = self.anim[self.anim_frame]
                
 
-    def draw(self, target,dt):
+    def draw(self, target, dt):
         self.update(dt)
         g = pygame.sprite.RenderPlain(self)
         g.draw(target)
