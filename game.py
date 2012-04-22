@@ -8,7 +8,9 @@ follow along in the tutorial.
 
 
 #Import Modules
-import os, pygame
+import asset
+import os
+import pygame
 from pygame.locals import *
 from pygame.compat import geterror
 
@@ -18,21 +20,20 @@ from pygame.compat import geterror
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 data_dir = os.path.join(main_dir, 'data')
 
-
-import asset
-from asset import *
+FPS = 60
 
 #import objects
 #from objects import *
 
 
-#classes for our game objects 
+#classes for our game objects
 #these two can be removed later, just using them to have some interactivity while testing assets
 class Fist(pygame.sprite.Sprite):
     """moves a clenched fist on the screen, following the mouse"""
     def __init__(self):
         pygame.sprite.Sprite.__init__(self) #call Sprite initializer
-        self.image, self.rect = asset.load_image('fist.bmp', -1)
+        self.image = asset.get_image('fist.bmp', -1)
+        self.rect = self.image.get_rect()
         self.punching = 0
 
     def update(self):
@@ -59,7 +60,8 @@ class Chimp(pygame.sprite.Sprite):
        monkey when it is punched."""
     def __init__(self):
         pygame.sprite.Sprite.__init__(self) #call Sprite intializer
-        self.image, self.rect = asset.load_image('coolface.png', -1)
+        self.image = asset.get_image('coolface.png', -1)
+        self.rect = self.image.get_rect()
         screen = pygame.display.get_surface()
         self.area = screen.get_rect()
         self.rect.topleft = 10, 10
@@ -111,7 +113,7 @@ def main():
     screen = pygame.display.set_mode((640, 400))
     pygame.display.set_caption('LD23 a tiny world')
     pygame.mouse.set_visible(0)
-    pygame.key.set_repeat(1,10)
+    pygame.key.set_repeat(1, 10)
 #Create The Backgound
     background = pygame.Surface(screen.get_size())
     background = background.convert()
@@ -129,15 +131,20 @@ def main():
     pygame.display.flip()
 #Prepare Game Objects
     clock = pygame.time.Clock()
-    asset.load_sound('whiff.wav')
-    asset.load_sound('punch.wav')
-    
+
     chimp = Chimp()
     fist = Fist()
 
+    entity1 = asset.Entity()
+    #entity1.set_image('entity.jpg')
+    entity1.set_anim('animation.png', num=20, frames=FPS/20)
+    entity1.p = 100, 100
 
-    asset.load_image("entity.jpg",0)
+    entity2 = asset.Entity()
+    entity2.set_image('entity.jpg')
+    entity2.p = 300, 200
 
+<<<<<<< HEAD
     entity1 = Entity()
     entity1.setImage(1)
     entity1.p = 100,100
@@ -145,22 +152,23 @@ def main():
     entity2 = Entity()
     entity2.setImage(0)
     entity2.p = 300,200
+=======
+    entity3 = asset.Entity()
+    entity3.set_image('entity.jpg')
+    entity3.p = 100, 200
 
-    entity3 = Entity()
-    entity3.setImage(2)
-    entity3.p = 100,200
-	
-    allsprites = pygame.sprite.RenderPlain((fist,chimp))
-    i = 0
+    allsprites = pygame.sprite.RenderPlain((fist, chimp))
+>>>>>>> 2ac98e87b7c50e08af9d404d1bb9b1c7555a7fc6
+
 #Main Loop
     going = True
     while going:
-        clock.tick(60)
+        clock.tick(FPS)
         #Handle Input Events
         for event in pygame.event.get():
             if event.type == QUIT:
                 going = False
-            elif event.type == KEYDOWN: 
+            elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     going = False
                 if event.key == K_LEFT:
@@ -174,10 +182,10 @@ def main():
 
             elif event.type == MOUSEBUTTONDOWN:
                 if fist.punch(chimp):
-                    asset.getSound(1).play() #punch
+                    asset.get_sound('punch.wav').play() #punch
                     chimp.punched()
                 else:
-                    asset.getSound(0).play() #miss
+                    asset.get_sound('whiff.wav').play() #miss
             elif event.type == MOUSEBUTTONUP:
                 fist.unpunch()
 
@@ -186,9 +194,9 @@ def main():
         #Draw Everything
         screen.blit(background, (0, 0))
         #allsprites.draw(screen)
-		
-        
+
         entity1.p = pygame.mouse.get_pos()
+<<<<<<< HEAD
         entity2.p = chimp.rect[0],chimp.rect[1]
         
 		#testing animation, in a very cheap way >_>
@@ -196,11 +204,14 @@ def main():
         i+=1
         if i>2:
             i=0
+=======
+        entity2.p = chimp.rect[0], chimp.rect[1]
+>>>>>>> 2ac98e87b7c50e08af9d404d1bb9b1c7555a7fc6
 
         entity1.draw(screen)
         entity2.draw(screen)
         entity3.draw(screen)
-		
+
         pygame.display.flip()
 
     pygame.quit()
