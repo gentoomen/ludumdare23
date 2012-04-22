@@ -137,7 +137,7 @@ def main():
 
     entity1 = asset.Entity()
     #entity1.set_image('entity.jpg')
-    entity1.set_anim('animation.png', num=20, frames=FPS/20)
+    entity1.set_anim('animation.png', num=20, frames=FPS/20, colorkey=pygame.Color(255, 255, 255))
     entity1.p = 100, 100
 
     entity2 = asset.Entity()
@@ -208,9 +208,9 @@ def main():
         entity2.p = chimp.rect[0], chimp.rect[1]
 >>>>>>> 2ac98e87b7c50e08af9d404d1bb9b1c7555a7fc6
 
-        entity1.draw(screen)
         entity2.draw(screen)
         entity3.draw(screen)
+        entity1.draw(screen)
 
         pygame.display.flip()
 

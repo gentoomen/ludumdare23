@@ -1,5 +1,4 @@
 #!/usr/bin/python
-#
 
 import getopt
 import os
@@ -36,6 +35,6 @@ surf = pygame.Surface(((num*(width+1)), height))
 black = pygame.Color(0, 0, 0)
 white = pygame.Color(255, 255, 255)
 surf.fill(white)
-for i in xrange(num):
-    pygame.draw.line(surf, black, ((width+1)*(i+1), 0), ((width+1)*(i+1), height))
+for i in xrange(num-1):
+    pygame.draw.line(surf, black, ((width)*(i+1) + i, 0), ((width)*(i+1) + i, height))
 pygame.image.save(surf, filename)
