@@ -56,6 +56,11 @@ class Formicarium(object):
                     self.generate(pos, direct, distance)
             else:
                 self.tunnels.append(None)
+        last = None
+        for t in self.tunnels:
+            if last and t:
+                self.line(last, t)
+            last = t
 
     def line(self, p1, p2):
         x0, y0 = p1
@@ -112,20 +117,14 @@ class Formicarium(object):
 
     def draw_lines(self):
         self.surf.fill(DIRT)
-        #lines = []
-        #for t in self.tunnels:
-        #    if t:
-        #        lines.append((t[0] * SIZE, t[1] * SIZE))
-        #    else:
-        #        if len(lines) > 1:
-        #            pygame.draw.lines(self.surf, AIR, False, lines, SIZE*2)
-        #        lines = []
-        last = None
+        lines = []
         for t in self.tunnels:
-            if last and t:
-                pygame.draw.line(self.surf, AIR, (last[0]*SIZE, last[1]*SIZE), (t[0]*SIZE, t[1]*SIZE), SIZE*2)
-                self.line(last, t)
-            last = t
+            if t:
+                lines.append((t[0] * SIZE, t[1] * SIZE))
+            else:
+                if len(lines) > 1:
+                    pygame.draw.lines(self.surf, AIR, False, lines, SIZE*2)
+                lines = []
 
 if __name__ == '__main__': #test
     def main():
