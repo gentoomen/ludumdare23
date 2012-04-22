@@ -203,7 +203,7 @@ def main():
         #allsprites.draw(screen)
         food.p = pygame.mouse.get_pos()
         food.draw(screen,dtTime)
-		#swarm test
+		#swarm test 
         for i in xrange(100):
             ax = ants[i].p[0]
             ay = ants[i].p[1]
