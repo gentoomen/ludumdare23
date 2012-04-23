@@ -9,13 +9,14 @@ follow along in the tutorial.
 
 
 #Import Modules
-import math
 import asset
+import formicarium
+import math
 import os
 import pygame
+import random
 from pygame.locals import *
 from pygame.compat import geterror
-import random
 #if not pygame.font: print ('Warning, fonts disabled')
 #if not pygame.mixer: print ('Warning, sound disabled')
 
@@ -150,13 +151,14 @@ def main():
     background = pygame.Surface(screen.get_size())
     background = background.convert()
     background.fill((250, 250, 250))
+    formic = formicarium.Formicarium(background)
 
 #Put Text On The Background, Centered
     if pygame.font:
         font = pygame.font.Font(None, 36)
         text = font.render("press space to shuffle food", 1, (10, 10, 10))
         textpos = text.get_rect(centerx=background.get_width()/2)
-        background.blit(asset.get_image('f4.png', 0), (0,0))
+        formic.draw()
         background.blit(text, textpos)
 
 #Display The Background
