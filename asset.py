@@ -137,8 +137,8 @@ class Entity(pygame.sprite.Sprite):
         self.frame_time = frametime
 
     def update(self, dt):
-        self.rect[0] = self.p[0]
-        self.rect[1] = self.p[1]
+        self.rect[0] = self.p[0] - (self.rect[2]/2)
+        self.rect[1] = self.p[1] - (self.rect[3]/2)
         if self.anim:
             self.anim_counter += dt
             if self.anim_counter > self.frame_time:
