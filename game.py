@@ -9,6 +9,7 @@ follow along in the tutorial.
 
 
 #Import Modules
+import math
 import asset
 import os
 import pygame
@@ -103,6 +104,36 @@ class Chimp(pygame.sprite.Sprite):
         if not self.dizzy:
             self.dizzy = 1
             self.original = self.image
+def getDistance(a, b):
+    dist = math.hypot(a[0]-b[0], a[1]-b[1])
+    if dist < 0:
+        dist *= -1
+    return dist
+def moveToTarget(a, b, vel):
+    ax = a[0]
+    ay = a[1]
+    if a[0] < b[0]:
+        ax += vel
+    if a[0] > b[0]:
+        ax -= vel
+    if a[1] < b[1]:
+        ay += vel
+    if a[1] > b[1]:
+        ay -= vel
+    return [ax, ay]
+
+def moveToRandom(a, random_bias, vel):
+    ax = a[0]
+    ay = a[1]
+    if random.randrange(0, 100) > random_bias:
+        ax+= vel
+    else:
+        ax-= vel
+    if random.randrange(0, 100) > random_bias:
+        ay+= vel
+    else:
+        ay-= vel
+    return [ax, ay]
 
 
 def main():
@@ -123,7 +154,7 @@ def main():
 #Put Text On The Background, Centered
     if pygame.font:
         font = pygame.font.Font(None, 36)
-        text = font.render("SURE IS ANTS IN HERE!", 1, (10, 10, 10))
+        text = font.render("press space to shuffle food", 1, (10, 10, 10))
         textpos = text.get_rect(centerx=background.get_width()/2)
         background.blit(asset.get_image('f4.png', 0), (0,0))
         background.blit(text, textpos)
@@ -140,16 +171,27 @@ def main():
     allsprites = pygame.sprite.RenderPlain((fist, chimp))
     
     ants = []
-    for i in xrange(100):
+    for i in xrange(30):
         ants.append(asset.Entity())
         ants[i].set_anim('ant.png', num=3, frametime=100.0, colorkey=pygame.Color(255, 255, 255))
-        ants[i].p = random.randrange(640), random.randrange(480)
-		
-        asset.get_image('apple.png', -1)
-        food = asset.Entity()
-        food.set_image('apple.png')
-        food.p = 320, 240
+        ants[i].p = [320,240]
+        ants[i].home = 0
+        ants[i].target = [-1,-1]
+        ants[i].life = 200
 
+	asset.get_image('apple.png', -1)
+    food = []
+    for i in xrange(10):
+        food.append(asset.Entity())
+        food[i].set_image('apple.png')
+        food[i].p = random.randrange(640), random.randrange(480)
+        food[i].life = random.randrange(15)
+
+    asset.get_image('ant_hill.png', -1)
+    home = asset.Entity()
+    home.set_image('ant_hill.png')
+    home.p = 320,240
+    home.target = [-1,-1]
 		
 #Main Loop
     currentTime = pygame.time.get_ticks()
@@ -187,6 +229,10 @@ def main():
                         chimp.rect[1] -= 0.1 * dt
                     if event.key == K_DOWN:
                         chimp.rect[1] += 0.1 * dt
+                    if event.key == K_SPACE:
+                        for i in xrange(10):
+                            food[i].p = random.randrange(640), random.randrange(480)
+
 
                 elif event.type == MOUSEBUTTONDOWN:
                     if fist.punch(chimp):
@@ -201,32 +247,57 @@ def main():
 
         #Draw Everything
         screen.blit(background, (0, 0))
-        #allsprites.draw(screen)
-        food.p = pygame.mouse.get_pos()
-        food.draw(screen,dtTime)
-		#swarm test
-        for i in xrange(100):
-            ax = ants[i].p[0]
-            ay = ants[i].p[1]
-            if random.randrange(0,100) > 50:
-                ax+= 0.1 * dtTime
-            if random.randrange(0,100) > 50:
-                ax-= 0.1 * dtTime
-            if random.randrange(0,100) > 50:
-                ay+= 0.1 * dtTime
-            if random.randrange(0,100) > 50:
-                ay-= 0.1 * dtTime
-            if ax < food.p[0] and random.randrange(0,100) > 80:
-                ax += 0.1 * dtTime
-            if ax > food.p[0] and random.randrange(0,100) > 80:
-                ax -= 0.1 * dtTime
-            if ay < food.p[1] and random.randrange(0,100) > 80:
-                ay += 0.1 * dtTime
-            if ay > food.p[1] and random.randrange(0,100) > 80:
-                ay -= 0.1 * dtTime
-            
-            ants[i].p = [ax, ay]
-            ants[i].draw(screen,dtTime)
+        #uncommenting these two lines will let you move an infinite foodsource around and control the ants
+        #food[0].p = pygame.mouse.get_pos()
+        #food[0].life = 1000
+        home.draw(screen,dtTime)
+        for i in xrange(10):
+            food[i].draw(screen,dtTime)
+        #swarm test 
+        for i in xrange(30):
+            if ants[i].home == 0:
+                for j in xrange(10):
+                    if getDistance(ants[i].p, food[j].p) < 130 and ants[i].target[0] == -1:
+                        ants[i].p = moveToTarget(ants[i].p, food[j].p, 0.01 * dtTime)
+                    if getDistance(ants[i].p, food[j].p) < 20:
+                        if food[j].life < 0:
+                            food[j].p = random.randrange(640), random.randrange(480)
+                            food[j].life = random.randrange(100)
+                            ants[i].target = [-1, -1]
+                            ants[i].home = 1
+                        else:
+                            food[j].life -= 1
+                            ants[i].home = 1
+                            ants[i].target = food[j].p
+
+                if ants[i].target[0] != -1:
+                    ants[i].p = moveToTarget(ants[i].p, ants[i].target, 0.1 * dtTime)
+                    if getDistance(ants[i].p, ants[i].target) < 10 and ants[i].home == 0:
+                        #ants[i].home = 1
+                        ants[i].target = [-1, -1]
+                else:
+                    #ants[i].p = moveToRandom(ants[i].p, 50, 0.1 * dtTime)
+                    distx = random.randrange(10,320)
+                    disty = random.randrange(10,240)
+                    ants[i].target = ants[i].p[0] + random.randrange(-distx,distx), ants[i].p[1] + random.randrange(-disty,disty)
+
+            if ants[i].home == 1:
+                ants[i].p = moveToTarget(ants[i].p, home.p, 0.1 * dtTime)
+                if getDistance(ants[i].p, home.p) < 10:
+                    ants[i].home = 0
+                    ants[i].life = 200
+                    ant_target = ants[i].target
+                    if home.target[0] != -1:
+					    ants[i].target = home.target
+                    if ants[i].target[0] != -1:
+                        home.target = ant_target
+            if ants[i].home != 1:
+                ants[i].life -= 1
+            if ants[i].life < 0 and ants[i].target[0] == -1:
+                ants[i].home = 1
+
+            if getDistance(ants[i].p, home.p) > 25:
+                ants[i].draw(screen,dtTime)
 			
         pygame.display.flip()
 
