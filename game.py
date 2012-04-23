@@ -181,7 +181,7 @@ def main():
         ants[i].target = [-1,-1]
         ants[i].life = 200
 
-	asset.get_image('apple.png', -1)
+    asset.get_image('apple.png', -1)
     food = []
     for i in xrange(10):
         food.append(asset.Entity())
@@ -194,7 +194,7 @@ def main():
     home.set_image('ant_hill.png')
     home.p = 320,240
     home.target = [-1,-1]
-		
+        
 #Main Loop
     currentTime = pygame.time.get_ticks()
     newTime = 0.0
@@ -290,7 +290,7 @@ def main():
                     ants[i].life = 200
                     ant_target = ants[i].target
                     if home.target[0] != -1:
-					    ants[i].target = home.target
+                        ants[i].target = home.target
                     if ants[i].target[0] != -1:
                         home.target = ant_target
             if ants[i].home != 1:
@@ -300,7 +300,7 @@ def main():
 
             if getDistance(ants[i].p, home.p) > 25:
                 ants[i].draw(screen,dtTime)
-			
+            
         pygame.display.flip()
 
     pygame.quit()
