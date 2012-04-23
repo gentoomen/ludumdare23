@@ -9,6 +9,7 @@ follow along in the tutorial.
 
 
 #Import Modules
+import math
 import asset
 import os
 import pygame
@@ -103,7 +104,11 @@ class Chimp(pygame.sprite.Sprite):
         if not self.dizzy:
             self.dizzy = 1
             self.original = self.image
-
+def getDistance(a, b):
+    dist = math.hypot(a[0]-b[0], a[1]-b[1])
+    if dist < 0:
+        dist *= -1
+    return dist
 
 def main():
     """this function is called when the program starts.
@@ -123,7 +128,7 @@ def main():
 #Put Text On The Background, Centered
     if pygame.font:
         font = pygame.font.Font(None, 36)
-        text = font.render("SURE IS ANTS IN HERE!", 1, (10, 10, 10))
+        text = font.render("press space to shuffle food", 1, (10, 10, 10))
         textpos = text.get_rect(centerx=background.get_width()/2)
         background.blit(asset.get_image('f4.png', 0), (0,0))
         background.blit(text, textpos)
@@ -144,11 +149,13 @@ def main():
         ants.append(asset.Entity())
         ants[i].set_anim('ant.png', num=3, frametime=100.0, colorkey=pygame.Color(255, 255, 255))
         ants[i].p = random.randrange(640), random.randrange(480)
-		
-        asset.get_image('apple.png', -1)
-        food = asset.Entity()
-        food.set_image('apple.png')
-        food.p = 320, 240
+    
+	asset.get_image('apple.png', -1)
+    food = []
+    for i in xrange(10):
+        food.append(asset.Entity())
+        food[i].set_image('apple.png')
+        food[i].p = random.randrange(640), random.randrange(480)
 
 		
 #Main Loop
@@ -187,6 +194,10 @@ def main():
                         chimp.rect[1] -= 0.1 * dt
                     if event.key == K_DOWN:
                         chimp.rect[1] += 0.1 * dt
+                    if event.key == K_SPACE:
+                        for i in xrange(10):
+                            food[i].p = random.randrange(640), random.randrange(480)
+
 
                 elif event.type == MOUSEBUTTONDOWN:
                     if fist.punch(chimp):
@@ -202,9 +213,10 @@ def main():
         #Draw Everything
         screen.blit(background, (0, 0))
         #allsprites.draw(screen)
-        food.p = pygame.mouse.get_pos()
-        food.draw(screen,dtTime)
-		#swarm test 
+        food[0].p = pygame.mouse.get_pos()
+        for i in xrange(10):
+            food[i].draw(screen,dtTime)
+        #swarm test 
         for i in xrange(100):
             ax = ants[i].p[0]
             ay = ants[i].p[1]
@@ -216,14 +228,15 @@ def main():
                 ay+= 0.1 * dtTime
             if random.randrange(0,100) > 50:
                 ay-= 0.1 * dtTime
-            if ax < food.p[0] and random.randrange(0,100) > 80:
-                ax += 0.1 * dtTime
-            if ax > food.p[0] and random.randrange(0,100) > 80:
-                ax -= 0.1 * dtTime
-            if ay < food.p[1] and random.randrange(0,100) > 80:
-                ay += 0.1 * dtTime
-            if ay > food.p[1] and random.randrange(0,100) > 80:
-                ay -= 0.1 * dtTime
+            for j in xrange(10):
+                if ax < food[j].p[0] and random.randrange(0,100) > 80 and getDistance(ants[i].p, food[j].p) < 100:
+                    ax += 0.1 * dtTime
+                if ax > food[j].p[0] and random.randrange(0,100) > 80 and getDistance(ants[i].p, food[j].p) < 100:
+                    ax -= 0.1 * dtTime
+                if ay < food[j].p[1] and random.randrange(0,100) > 80 and getDistance(ants[i].p, food[j].p) < 100:
+                    ay += 0.1 * dtTime
+                if ay > food[j].p[1] and random.randrange(0,100) > 80 and getDistance(ants[i].p, food[j].p) < 100:
+                    ay -= 0.1 * dtTime
             
             ants[i].p = [ax, ay]
             ants[i].draw(screen,dtTime)
