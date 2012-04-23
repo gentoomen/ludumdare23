@@ -9,11 +9,8 @@ follow along in the tutorial.
 import asset
 import formicarium
 import math
-import os
 import pygame
 import random
-from pygame.locals import *
-from pygame.compat import geterror
 
 FPS = 60
 NUM_ANTS = 30
@@ -42,13 +39,13 @@ def moveToRandom(a, random_bias, vel):
     ax = a[0]
     ay = a[1]
     if random.randrange(0, 100) > random_bias:
-        ax+= vel
+        ax += vel
     else:
-        ax-= vel
+        ax -= vel
     if random.randrange(0, 100) > random_bias:
-        ay+= vel
+        ay += vel
     else:
-        ay-= vel
+        ay -= vel
     return [ax, ay]
 
 def main():
@@ -103,7 +100,7 @@ def main():
     home.set_image('ant_hill.png')
     home.p = 320, 240
     home.target = [-1, -1]
-        
+
     #Main Loop
     currentTime = pygame.time.get_ticks()
     newTime = 0.0
@@ -127,12 +124,12 @@ def main():
             dtTime += dt
 
             for event in pygame.event.get():
-                if event.type == QUIT:
+                if event.type == pygame.QUIT:
                     going = False
-                elif event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
                         going = False
-                    elif event.key == K_SPACE:
+                    elif event.key == pygame.K_SPACE:
                         for i in xrange(NUM_FOOD):
                             food[i].p = random.randrange(640), random.randrange(480)
 
@@ -144,7 +141,7 @@ def main():
         home.draw(screen, dtTime)
         for i in xrange(NUM_FOOD):
             food[i].draw(screen, dtTime)
-        #swarm test 
+        #swarm test
         for i in xrange(NUM_ANTS):
             if ants[i].home == 0:
                 for j in xrange(NUM_FOOD):
@@ -189,7 +186,7 @@ def main():
 
             if getDistance(ants[i].p, home.p) > 25:
                 ants[i].draw(screen, dtTime)
-            
+
         pygame.display.flip()
 
     pygame.quit()

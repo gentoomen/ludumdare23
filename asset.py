@@ -1,7 +1,6 @@
 import os
 import pygame
 import sys
-from pygame.locals import *
 from pygame.compat import geterror
 
 if not pygame.font:
@@ -29,7 +28,7 @@ def _image(name, colorkey=None):
     if colorkey is not None:
         if colorkey is -1:
             colorkey = image.get_at((0, 0))
-        image.set_colorkey(colorkey, RLEACCEL)
+        image.set_colorkey(colorkey, pygame.RLEACCEL)
     return image
 
 def load_image(name, colorkey=None):
@@ -60,7 +59,7 @@ def _anim(name, num, colorkey=None):
 
 def load_anim(name, num, colorkey=None):
     '''Loads an animation named `name' with `num' frames and with colorkey `c' from a file.
-    
+
     The animation is supposed to be in a spritesheet that has num sprites horizontally, separated by 1px columns.
     Use spritesheet.py to generate such sheets.'''
     anim = _anim(name, num, colorkey)
@@ -148,7 +147,7 @@ class Entity(pygame.sprite.Sprite):
                 if self.anim_frame > len(self.anim)-1:
                     self.anim_frame = 0
                 self.image = self.anim[self.anim_frame]
-               
+
 
     def draw(self, target, dt):
         self.update(dt)

@@ -1,4 +1,3 @@
-import asset
 import pygame
 import random
 
@@ -34,7 +33,7 @@ class Formicarium(object):
 
     def generate(self, pos=None, direct=None, distance=0):
         '''Generate tunnels.
-        
+
         When generating a new formicarium, don't give the `pos', `direct' or `distance' arguments.
         These are used when this function recursively calls itself to generate additional tunnels.'''
         if not pos: # generating a new formicarium
@@ -55,7 +54,6 @@ class Formicarium(object):
             distance += 1
             if self.tunnels and self.tunnels[-1] == None: # first block of a tunnel
                 self.tunnels.append(pos)
-            oldpos = pos
             pos = self.topos(pos, direct)
             if pos[0] >= 0 and pos[0] < self.dim[0]/SIZE and pos[1] >= 0 and pos[1] < self.dim[1]/SIZE and not self.dirt[pos[0]][pos[1]] and (not DISTANCE or (random.randrange(distance) < DISTANCE and distance < 2*DISTANCE)): # tunnel not out of screen and tunnel not too long
                 self.tunnels.append(pos)
@@ -88,7 +86,7 @@ class Formicarium(object):
         x0, y0 = p1
         x1, y1 = p2
         dx = abs(x1 - x0)
-        dy = abs(y1 - y0) 
+        dy = abs(y1 - y0)
         sx = 1 if x0 < x1 else -1
         sy = 1 if y0 < y1 else -1
         err = dx - dy
@@ -98,18 +96,18 @@ class Formicarium(object):
                 break
             self.dirt[x0][y0] = True
             if x0 == x1 and y0 == y1:
-                break  
+                break
             e2 = 2 * err
             if e2 > -dy:
                 err -= dy
                 x0 += sx
             if e2 < dx:
                 err += dx
-                y0 += sy 
+                y0 += sy
 
     def new_direct(self, direct):
         '''Switch a direction of the tunnel.
-        
+
         At the moment, it only vertically inverts it with 1/8 chance.'''
         if not random.randrange(8):
             direct = (direct + 3) % 6
@@ -129,7 +127,7 @@ class Formicarium(object):
 
     def draw(self, surf=None, dirt=DIRT, air=AIR):
         '''Draws the formicarium on the surface using circles.
-        
+
         If `surf' argument is given, it draws to that surface instead of `self.surf'.
         If `dirt' or `air' arguments are given, it uses these colors for dirt/air.'''
         if surf is None:
