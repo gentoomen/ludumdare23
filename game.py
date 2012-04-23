@@ -6,9 +6,6 @@ Note there are comments here, but for the full explanation,
 follow along in the tutorial.
 """
 
-
-
-#Import Modules
 import asset
 import formicarium
 import math
@@ -17,99 +14,17 @@ import pygame
 import random
 from pygame.locals import *
 from pygame.compat import geterror
-#if not pygame.font: print ('Warning, fonts disabled')
-#if not pygame.mixer: print ('Warning, sound disabled')
-
-main_dir = os.path.split(os.path.abspath(__file__))[0]
-data_dir = os.path.join(main_dir, 'data')
 
 FPS = 60
+NUM_ANTS = 30
+NUM_FOOD = 10
 
-#import objects
-#from objects import *
-
-
-#classes for our game objects
-#these two can be removed later, just using them to have some interactivity while testing assets
-class Fist(pygame.sprite.Sprite):
-    """moves a clenched fist on the screen, following the mouse"""
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self) #call Sprite initializer
-        self.image = asset.get_image('fist.bmp', -1)
-        self.rect = self.image.get_rect()
-        self.punching = 0
-
-    def update(self):
-        "move the fist based on the mouse position"
-        pos = pygame.mouse.get_pos()
-        self.rect.midtop = pos
-        if self.punching:
-            self.rect.move_ip(5, 10)
-
-    def punch(self, target):
-        "returns true if the fist collides with the target"
-        if not self.punching:
-            self.punching = 1
-            hitbox = self.rect.inflate(-5, -5)
-            return hitbox.colliderect(target.rect)
-
-    def unpunch(self):
-        "called to pull the fist back"
-        self.punching = 0
-
-
-class Chimp(pygame.sprite.Sprite):
-    """moves a monkey critter across the screen. it can spin the
-       monkey when it is punched."""
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self) #call Sprite intializer
-        self.image = asset.get_image('coolface.png', -1)
-        self.rect = self.image.get_rect()
-        screen = pygame.display.get_surface()
-        self.area = screen.get_rect()
-        self.rect.topleft = 10, 10
-        self.move = 9
-        self.dizzy = 0
-
-    def update(self):
-        "walk or spin, depending on the monkeys state"
-        if self.dizzy:
-            self._spin()
-        #else:
-            #self._walk()
-
-    def _walk(self):
-        "move the monkey across the screen, and turn at the ends"
-        newpos = self.rect.move((self.move, 0))
-        if self.rect.left < self.area.left or \
-            self.rect.right > self.area.right:
-            self.move = -self.move
-            newpos = self.rect.move((self.move, 0))
-            self.image = pygame.transform.flip(self.image, 1, 1)
-        self.rect = newpos
-
-    def _spin(self):
-        "spin the monkey image"
-        center = self.rect.center
-        self.dizzy = self.dizzy + 5
-        if self.dizzy >= 360:
-            self.dizzy = 0
-            self.image = self.original
-        else:
-            rotate = pygame.transform.rotate
-            self.image = rotate(self.original, self.dizzy)
-        self.rect = self.image.get_rect(center=center)
-
-    def punched(self):
-        "this will cause the monkey to start spinning"
-        if not self.dizzy:
-            self.dizzy = 1
-            self.original = self.image
 def getDistance(a, b):
     dist = math.hypot(a[0]-b[0], a[1]-b[1])
     if dist < 0:
         dist *= -1
     return dist
+
 def moveToTarget(a, b, vel):
     ax = a[0]
     ay = a[1]
@@ -136,24 +51,23 @@ def moveToRandom(a, random_bias, vel):
         ay-= vel
     return [ax, ay]
 
-
 def main():
     """this function is called when the program starts.
        it initializes everything it needs, then runs in
        a loop until the function returns."""
-#Initialize Everything
+    #Initialize Everything
     pygame.init()
     screen = pygame.display.set_mode((640, 480))
     pygame.display.set_caption('LD23 a tiny world')
     pygame.mouse.set_visible(0)
     pygame.key.set_repeat(1, 10)
-#Create The Backgound
+    #Create The Backgound
     background = pygame.Surface(screen.get_size())
     background = background.convert()
     background.fill((250, 250, 250))
     formic = formicarium.Formicarium(background)
 
-#Put Text On The Background, Centered
+    #Put Text On The Background, Centered
     if pygame.font:
         font = pygame.font.Font(None, 36)
         text = font.render("press space to shuffle food", 1, (10, 10, 10))
@@ -161,29 +75,24 @@ def main():
         formic.draw()
         background.blit(text, textpos)
 
-#Display The Background
+    #Display The Background
     screen.blit(background, (0, 0))
     pygame.display.flip()
-#Prepare Game Objects
+    #Prepare Game Objects
     clock = pygame.time.Clock()
 
-    chimp = Chimp()
-    fist = Fist()
-
-    allsprites = pygame.sprite.RenderPlain((fist, chimp))
-    
     ants = []
-    for i in xrange(30):
+    for i in xrange(NUM_ANTS):
         ants.append(asset.Entity())
         ants[i].set_anim('ant.png', num=3, frametime=100.0, colorkey=pygame.Color(255, 255, 255))
-        ants[i].p = [320,240]
+        ants[i].p = [320, 240]
         ants[i].home = 0
-        ants[i].target = [-1,-1]
+        ants[i].target = [-1, -1]
         ants[i].life = 200
 
     asset.get_image('apple.png', -1)
     food = []
-    for i in xrange(10):
+    for i in xrange(NUM_FOOD):
         food.append(asset.Entity())
         food[i].set_image('apple.png')
         food[i].p = random.randrange(640), random.randrange(480)
@@ -192,10 +101,10 @@ def main():
     asset.get_image('ant_hill.png', -1)
     home = asset.Entity()
     home.set_image('ant_hill.png')
-    home.p = 320,240
-    home.target = [-1,-1]
+    home.p = 320, 240
+    home.target = [-1, -1]
         
-#Main Loop
+    #Main Loop
     currentTime = pygame.time.get_ticks()
     newTime = 0.0
     frameTime = 0.0
@@ -223,42 +132,22 @@ def main():
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         going = False
-                    if event.key == K_LEFT:
-                        chimp.rect[0] -= 0.1 * dt
-                    if event.key == K_RIGHT:
-                        chimp.rect[0] += 0.1 * dt
-                    if event.key == K_UP:
-                        chimp.rect[1] -= 0.1 * dt
-                    if event.key == K_DOWN:
-                        chimp.rect[1] += 0.1 * dt
-                    if event.key == K_SPACE:
-                        for i in xrange(10):
+                    elif event.key == K_SPACE:
+                        for i in xrange(NUM_FOOD):
                             food[i].p = random.randrange(640), random.randrange(480)
-
-
-                elif event.type == MOUSEBUTTONDOWN:
-                    if fist.punch(chimp):
-                        asset.get_sound('punch.wav').play() #punch
-                        chimp.punched()
-                    else:
-                        asset.get_sound('whiff.wav').play() #miss
-                elif event.type == MOUSEBUTTONUP:
-                    fist.unpunch()
-
-        allsprites.update()
 
         #Draw Everything
         screen.blit(background, (0, 0))
         #uncommenting these two lines will let you move an infinite foodsource around and control the ants
         #food[0].p = pygame.mouse.get_pos()
         #food[0].life = 1000
-        home.draw(screen,dtTime)
-        for i in xrange(10):
-            food[i].draw(screen,dtTime)
+        home.draw(screen, dtTime)
+        for i in xrange(NUM_FOOD):
+            food[i].draw(screen, dtTime)
         #swarm test 
-        for i in xrange(30):
+        for i in xrange(NUM_ANTS):
             if ants[i].home == 0:
-                for j in xrange(10):
+                for j in xrange(NUM_FOOD):
                     if getDistance(ants[i].p, food[j].p) < 130 and ants[i].target[0] == -1:
                         ants[i].p = moveToTarget(ants[i].p, food[j].p, 0.01 * dtTime)
                     if getDistance(ants[i].p, food[j].p) < 20:
@@ -279,9 +168,9 @@ def main():
                         ants[i].target = [-1, -1]
                 else:
                     #ants[i].p = moveToRandom(ants[i].p, 50, 0.1 * dtTime)
-                    distx = random.randrange(10,320)
-                    disty = random.randrange(10,240)
-                    ants[i].target = ants[i].p[0] + random.randrange(-distx,distx), ants[i].p[1] + random.randrange(-disty,disty)
+                    distx = random.randrange(10, 320)
+                    disty = random.randrange(10, 240)
+                    ants[i].target = ants[i].p[0] + random.randrange(-distx, distx), ants[i].p[1] + random.randrange(-disty, disty)
 
             if ants[i].home == 1:
                 ants[i].p = moveToTarget(ants[i].p, home.p, 0.1 * dtTime)
@@ -299,12 +188,12 @@ def main():
                 ants[i].home = 1
 
             if getDistance(ants[i].p, home.p) > 25:
-                ants[i].draw(screen,dtTime)
+                ants[i].draw(screen, dtTime)
             
         pygame.display.flip()
 
     pygame.quit()
-#Game Over
+    #Game Over
 
 
 #this calls the 'main' function when this script is executed
