@@ -15,6 +15,8 @@ import random
 FPS = 60
 NUM_ANTS = 30
 NUM_FOOD = 10
+SCREEN_X = 1024
+SCREEN_Y = 768
 
 def getDistance(a, b):
     dist = math.hypot(a[0]-b[0], a[1]-b[1])
@@ -54,7 +56,7 @@ def main():
        a loop until the function returns."""
     #Initialize Everything
     pygame.init()
-    screen = pygame.display.set_mode((640, 480))
+    screen = pygame.display.set_mode((SCREEN_X, SCREEN_Y))
     pygame.display.set_caption('LD23 a tiny world')
     pygame.mouse.set_visible(0)
     pygame.key.set_repeat(1, 10)
@@ -82,7 +84,7 @@ def main():
     for i in xrange(NUM_ANTS):
         ants.append(asset.Entity())
         ants[i].set_anim('ant.png', num=3, frametime=100.0, colorkey=pygame.Color(255, 255, 255))
-        ants[i].p = [320, 240]
+        ants[i].p = [SCREEN_X/2., SCREEN_Y/2.]
         ants[i].home = 0
         ants[i].target = [-1, -1]
         ants[i].life = 200
@@ -92,13 +94,13 @@ def main():
     for i in xrange(NUM_FOOD):
         food.append(asset.Entity())
         food[i].set_image('apple.png')
-        food[i].p = random.randrange(640), random.randrange(480)
+        food[i].p = random.randrange(SCREEN_X), random.randrange(SCREEN_Y)
         food[i].life = random.randrange(15)
 
     asset.get_image('ant_hill.png', -1)
     home = asset.Entity()
     home.set_image('ant_hill.png')
-    home.p = 320, 240
+    home.p = SCREEN_X/2., SCREEN_Y/2.
     home.target = [-1, -1]
 
     #Main Loop
@@ -131,7 +133,7 @@ def main():
                         going = False
                     elif event.key == pygame.K_SPACE:
                         for i in xrange(NUM_FOOD):
-                            food[i].p = random.randrange(640), random.randrange(480)
+                            food[i].p = random.randrange(SCREEN_X), random.randrange(SCREEN_Y)
 
         #Draw Everything
         screen.blit(background, (0, 0))
@@ -149,7 +151,7 @@ def main():
                         ants[i].p = moveToTarget(ants[i].p, food[j].p, 0.01 * dtTime)
                     if getDistance(ants[i].p, food[j].p) < 20:
                         if food[j].life < 0:
-                            food[j].p = random.randrange(640), random.randrange(480)
+                            food[j].p = random.randrange(SCREEN_X), random.randrange(SCREEN_Y)
                             food[j].life = random.randrange(100)
                             ants[i].target = [-1, -1]
                             ants[i].home = 1
@@ -165,8 +167,8 @@ def main():
                         ants[i].target = [-1, -1]
                 else:
                     #ants[i].p = moveToRandom(ants[i].p, 50, 0.1 * dtTime)
-                    distx = random.randrange(10, 320)
-                    disty = random.randrange(10, 240)
+                    distx = random.randrange(10, SCREEN_X/2.)
+                    disty = random.randrange(10, SCREEN_Y/2.)
                     ants[i].target = ants[i].p[0] + random.randrange(-distx, distx), ants[i].p[1] + random.randrange(-disty, disty)
 
             if ants[i].home == 1:
